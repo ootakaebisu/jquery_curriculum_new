@@ -56,6 +56,16 @@
       // .slideUp() 要素がスライドしながら非表示されます。
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
+
+      $('.menu__list > li').hover(
+        function(){
+          $(this).children("ul").stop().slideDown();
+        },
+        function(){
+          $(this).children("ul").stop().slideUp();
+        }
+      );
+
     </script>
   </body>
 </html>
