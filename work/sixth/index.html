@@ -87,6 +87,85 @@
       //     <a class="btn-item" data-js="page-next" href="">次へ</a>
       //   </div>
       // </div>
+
+      // 実装！！！！！！！！
+      $(function(){
+        $('.search__btn').on('click', function(){
+          var keyword = $('.search__text__input').val();
+          // console.log(keyword);
+          $.ajax({
+          url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+          type: 'GET',
+          datatype: 'json',
+          data: {
+            // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+            applicationId: appId,
+            booksGenreId: '001',
+            keyword: keyword,
+            hits: '20'
+          }}).done(function(data) {
+            // この中にデータ取得後の動きを記述していきます。
+             if (data.count > 0){
+              $("ul").empty();
+              $.each(data.Items,function(i,item){
+                var list = $("<li class='lists__item'>" +
+                  "<div class='lists__item__inner'>" +
+                  "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
+                  "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt>" +
+                  "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
+                  "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
+                  "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' + '</a>' +
+                  '</div>' + '</li>');
+                $('ul').prepend(list);
+              })
+            } else {
+              $('.lists').html('<div class="comment"></div>')
+              comment = $('.comment');
+              comment.html('<p class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
+            }
+            // console.log(data);
+          });
+        })
+      })
+
+      //     $.ajax({
+      //     url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+      //     type: 'GET',
+      //     datatype: 'json',
+      //     data: {
+      //       // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+      //       applicationId: appId,
+      //       booksGenreId: '001',
+      //       keyword: keyword,
+      //       hits: '20'
+      //     }}).done(function(data) {
+      //       // この中にデータ取得後の動きを記述していきます。
+      //       console.log(data);
+      //     });
+      //   })
+      // }
+
+
+    //   コピペ
+    //   if (data.count > 0){
+    //   $("ul").empty();
+    //   $.each(data.Items,function(i,item){
+    //     var list = $("<li class='lists__item'>" +
+    //       "<div class='lists__item__inner'>" +
+    //       "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
+    //       "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt>" +
+    //       "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
+    //       "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
+    //       "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' + '</a>' +
+    //       '</div>' + '</li>');
+    //     $('ul').prepend(list);
+    //   })
+    // } else {
+    //   $('.lists').before('<div class="comment"></div>')
+    //   comment = $('.comment');
+    //   comment.html('<p class="message">検索結果が見つかりませんでした。</p>');
+    // }
+
     </script>
   </body>
 </html>
