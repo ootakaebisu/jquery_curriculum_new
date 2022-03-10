@@ -92,11 +92,15 @@
       $(function(){
         $('.search__btn').on('click', function(){
           var keyword = $('.search__text__input').val();
-          // console.log(keyword);
+          // エラー時と検索結果が無い時の文字挿入用のhtmlを作成
+          $('.lists').html('<div class="comment"></div>')
+          $comment = $('.comment');
+
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
           datatype: 'json',
+          // timeout: 3000,
           data: {
             // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
             applicationId: appId,
@@ -105,7 +109,7 @@
             hits: '20'
           }}).done(function(data) {
             // この中にデータ取得後の動きを記述していきます。
-             if (data.count > 0){
+            if (data.count > 0){
               $("ul").empty();
               $.each(data.Items,function(i,item){
                 var list = $("<li class='lists__item'>" +
@@ -119,52 +123,21 @@
                 $('ul').prepend(list);
               })
             } else {
-              $('.lists').html('<div class="comment"></div>')
-              comment = $('.comment');
-              comment.html('<p class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
+              $comment.html('<p class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
             }
-            // console.log(data);
-          });
+          }).fail(function(xhr){
+            if (xhr.status === 0) {
+              $comment.html('<p class="message">③オフラインめう！</p>');
+            } else if (xhr.status === 400) {
+              $comment.html('<p class="message">①空欄だお！</p>');
+            } else if (xhr.status === 429) {
+              $comment.html('<p class="message">②クリックしすぎや！</p>');
+            } else {
+              $comment.html('<p class="message">わからん！！！</p>');
+            }
+          })
         })
       })
-
-      //     $.ajax({
-      //     url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-      //     type: 'GET',
-      //     datatype: 'json',
-      //     data: {
-      //       // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
-      //       applicationId: appId,
-      //       booksGenreId: '001',
-      //       keyword: keyword,
-      //       hits: '20'
-      //     }}).done(function(data) {
-      //       // この中にデータ取得後の動きを記述していきます。
-      //       console.log(data);
-      //     });
-      //   })
-      // }
-
-
-    //   コピペ
-    //   if (data.count > 0){
-    //   $("ul").empty();
-    //   $.each(data.Items,function(i,item){
-    //     var list = $("<li class='lists__item'>" +
-    //       "<div class='lists__item__inner'>" +
-    //       "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
-    //       "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt>" +
-    //       "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
-    //       "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
-    //       "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' + '</a>' +
-    //       '</div>' + '</li>');
-    //     $('ul').prepend(list);
-    //   })
-    // } else {
-    //   $('.lists').before('<div class="comment"></div>')
-    //   comment = $('.comment');
-    //   comment.html('<p class="message">検索結果が見つかりませんでした。</p>');
-    // }
 
     </script>
   </body>
