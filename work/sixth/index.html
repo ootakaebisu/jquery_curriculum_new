@@ -21,6 +21,7 @@
           </div>
           <button class="search__btn" data-js="search-btn">検索する</button>
         </div>
+
         <div class="message" data-js="error-message"></div>
         <ul class="lists" data-js="book-lists"></ul>
       </div>
@@ -92,48 +93,76 @@
       $(function(){
         $('.search__btn').on('click', function(){
           var keyword = $('.search__text__input').val();
-          // エラー時と検索結果が無い時の文字挿入用のhtmlを作成
-          $('.lists').html('<div class="comment"></div>')
-          $comment = $('.comment');
+          var $message = $('.message');
+          $message.empty();
+          $("ul").empty();
+          $('.pager').remove();
 
           $.ajax({
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
           datatype: 'json',
-          // timeout: 3000,
+          // timeout: 30000,
           data: {
-            // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
             applicationId: appId,
             booksGenreId: '001',
             keyword: keyword,
             hits: '20'
           }}).done(function(data) {
-            // この中にデータ取得後の動きを記述していきます。
             if (data.count > 0){
-              $("ul").empty();
+              // 本の情報を並べる
+              var list = '';
               $.each(data.Items,function(i,item){
-                var list = $("<li class='lists__item'>" +
-                  "<div class='lists__item__inner'>" +
-                  "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
-                  "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt>" +
-                  "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
-                  "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
-                  "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' + '</a>' +
-                  '</div>' + '</li>');
-                $('ul').prepend(list);
+                list +=
+                  "<li class='lists__item'>" +
+                    "<div class='lists__item__inner'>" +
+                      "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
+                        "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt=''>" +
+                        "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
+                        "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
+                        "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' +
+                      '</a>' +
+                    '</div>' +
+                  '</li>';
               })
+              $('ul').prepend(list);
+
+              // ページネーション
+              var pagination = $(
+              "<div class='pager' data-js='pager'>" +
+                "<div class='counter'>" +
+                  "<span class='counter-current'>" + data.page + "</span>" + "/" +
+                  "<span class='counter-all'>" + data.pageCount + "</span>" +
+                "</div>" +
+                "<div class='btn-wrapper'>" +
+                  "<a class='btn-item' data-js='page-prev' href=''>" + "前へ" + "</a>" +
+                  "<a class='btn-item' data-js='page-next' href=''>" + "次へ" + "</a>" +
+                "</div>" +
+              "</div>"
+              )
+              $('ul').after(pagination);
+
+              // $('.btn-item').data('js')
+              // $('.btn-item').on('click', function(){
+              // });
+              // if($('.btn-item').length){
+              //   console.log("ページネーションがあるよ！！！");
+              // } else {
+              //   console.log("ページネーションはないよ〜");
+              // }
+
             } else {
-              $comment.html('<p class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>');
+              $message.html("<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>");
             }
           }).fail(function(xhr){
             if (xhr.status === 0) {
-              $comment.html('<p class="message">③オフラインめう！</p>');
+              $message.text("③オフライン！");
             } else if (xhr.status === 400) {
-              $comment.html('<p class="message">①空欄だお！</p>');
+              $message.text("①空欄！");
             } else if (xhr.status === 429) {
-              $comment.html('<p class="message">②クリックしすぎや！</p>');
+              $message.text("②クリックしすぎ！");
             } else {
-              $comment.html('<p class="message">わからん！！！</p>');
+              $message.text("わからん！！！");
             }
           })
         })
