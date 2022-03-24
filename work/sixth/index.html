@@ -1,13 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
     <title>jQuery</title>
-    <link rel="stylesheet" href="../../common/css/reset.css">
-    <link rel="stylesheet" href="../../common/css/base.css">
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../../common/css/reset.css" />
+    <link rel="stylesheet" href="../../common/css/base.css" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <div class="wrap">
@@ -17,7 +20,12 @@
         </div>
         <div class="search">
           <div class="search__text">
-            <input type="text" class="search__text__input" placeholder="検索する" data-js="search-word">
+            <input
+              type="text"
+              class="search__text__input"
+              placeholder="検索する"
+              data-js="search-word"
+            />
           </div>
           <button class="search__btn" data-js="search-btn">検索する</button>
         </div>
@@ -90,84 +98,130 @@
       // </div>
 
       // 実装！！！！！！！！
-      $(function(){
-        $('.search__btn').on('click', function(){
-          var keyword = $('.search__text__input').val();
-          var $message = $('.message');
+      $(function () {
+        $(".search__btn").on("click", function () {
+          var keyword = $(".search__text__input").val();
+          var $message = $(".message");
           $message.empty();
           $("ul").empty();
-          $('.pager').remove();
+          $(".pager").remove();
 
           $.ajax({
-          url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-          type: 'GET',
-          datatype: 'json',
-          // timeout: 30000,
-          data: {
-            applicationId: appId,
-            booksGenreId: '001',
-            keyword: keyword,
-            hits: '20'
-          }}).done(function(data) {
-            if (data.count > 0){
-              // 本の情報を並べる
-              var list = '';
-              $.each(data.Items,function(i,item){
-                list +=
-                  "<li class='lists__item'>" +
-                    "<div class='lists__item__inner'>" +
-                      "<a href='" + item.Item.itemUrl + "'class='lists__item__link' target='_blank'>" +
-                        "<img src='" + item.Item.mediumImageUrl + "' class='lists__item__img' alt=''>" +
-                        "<p class='lists__item__detail'>作品名：　" + item.Item.title + '</p>' +
-                        "<p class='lists__item__detail'>作者　：　" + item.Item.author + '</p>' +
-                        "<p class='lists__item__detail'>出版社：　" + item.Item.publisherName + '</p>' +
-                      '</a>' +
-                    '</div>' +
-                  '</li>';
-              })
-              $('ul').prepend(list);
-
-              // ページネーション
-              var pagination = $(
-              "<div class='pager' data-js='pager'>" +
-                "<div class='counter'>" +
-                  "<span class='counter-current'>" + data.page + "</span>" + "/" +
-                  "<span class='counter-all'>" + data.pageCount + "</span>" +
-                "</div>" +
-                "<div class='btn-wrapper'>" +
-                  "<a class='btn-item' data-js='page-prev' href=''>" + "前へ" + "</a>" +
-                  "<a class='btn-item' data-js='page-next' href=''>" + "次へ" + "</a>" +
-                "</div>" +
-              "</div>"
-              )
-              $('ul').after(pagination);
-
-              // $('.btn-item').data('js')
-              // $('.btn-item').on('click', function(){
-              // });
-              // if($('.btn-item').length){
-              //   console.log("ページネーションがあるよ！！！");
-              // } else {
-              //   console.log("ページネーションはないよ〜");
-              // }
-
-            } else {
-              $message.html("<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>");
-            }
-          }).fail(function(xhr){
-            if (xhr.status === 0) {
-              $message.text("③オフライン！");
-            } else if (xhr.status === 400) {
-              $message.text("①空欄！");
-            } else if (xhr.status === 429) {
-              $message.text("②クリックしすぎ！");
-            } else {
-              $message.text("わからん！！！");
-            }
+            url:
+              "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
+            type: "GET",
+            datatype: "json",
+            // timeout: 30000,
+            data: {
+              applicationId: appId,
+              booksGenreId: "001",
+              keyword: keyword,
+              hits: "20",
+            },
           })
-        })
-      })
+            .done(function (data) {
+              if (data.count > 0) {
+                // 本の情報を並べる
+                var list = "";
+                $.each(data.Items, function (i, item) {
+                  list +=
+                    "<li class='lists__item'>" +
+                    "<div class='lists__item__inner'>" +
+                    "<a href='" +
+                    item.Item.itemUrl +
+                    "'class='lists__item__link' target='_blank'>" +
+                    "<img src='" +
+                    item.Item.mediumImageUrl +
+                    "' class='lists__item__img' alt=''>" +
+                    "<p class='lists__item__detail'>作品名：　" +
+                    item.Item.title +
+                    "</p>" +
+                    "<p class='lists__item__detail'>作者　：　" +
+                    item.Item.author +
+                    "</p>" +
+                    "<p class='lists__item__detail'>出版社：　" +
+                    item.Item.publisherName +
+                    "</p>" +
+                    "</a>" +
+                    "</div>" +
+                    "</li>";
+                });
+                $("ul").prepend(list);
 
+                // ページネーション
+                var pagination = $(
+                  "<div class='pager' data-js='pager'>" +
+                    "<div class='counter'>" +
+                    "<span class='counter-current'>" +
+                    data.page +
+                    "</span>" +
+                    "/" +
+                    "<span class='counter-all'>" +
+                    data.pageCount +
+                    "</span>" +
+                    "</div>" +
+                    "<div class='btn-wrapper'>" +
+                    "<a class='btn-item' data-js='page-prev' href=''>" +
+                    "前へ" +
+                    "</a>" +
+                    "<a class='btn-item' data-js='page-next' href=''>" +
+                    "次へ" +
+                    "</a>" +
+                    "</div>" +
+                    "</div>"
+                );
+                $("ul").after(pagination);
+
+              // ページ遷移
+              var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
+              var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
+
+              $prev.on('click', function(e){
+                // alert("たこぴー");
+              })
+              $next.on('click', function(e){
+                // alert("コネシマ！！！！！");
+              })
+
+              // ページ遷移キャンセル
+              var offStyle = function(parts){
+                parts.css('background-color', 'gray')
+                     .css('cursor', 'default');
+              }
+
+              if(data.page === 1){
+                offStyle($prev);
+                $prev.on('click', function(e){
+                  e.preventDefault();
+                })
+              }
+              if(data.page === data.pageCount){
+                offStyle($next);
+                $next.on('click', function(e){
+                  e.preventDefault();
+                })
+              }
+
+
+              } else {
+                $message.html(
+                  "<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>"
+                );
+              }
+            })
+            .fail(function (xhr) {
+              if (xhr.status === 0) {
+                $message.text("③オフライン！");
+              } else if (xhr.status === 400) {
+                $message.text("①空欄！");
+              } else if (xhr.status === 429) {
+                $message.text("②クリックしすぎ！");
+              } else {
+                $message.text("わからん！！！");
+              }
+            });
+        });
+      });
     </script>
   </body>
 </html>
