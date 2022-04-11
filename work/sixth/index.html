@@ -52,16 +52,14 @@
           $(".pager").remove();
         }
 
-        // 通信が成功したときの挙動
+        // 検索結果（通信成功時）
         var success = function(data){
           reset();
           $(".search__btn").scrollTop(0);
 
           if (data.count > 0) {
-            // 本を並べる
+            // 本の表示
             var list = "";
-            // firstData = 20*(pageNum - 1)
-            // console.log(pageNum)
             $.each(data.Items, function (i, item) {
               list +=
                 "<li class='lists__item'>" +
@@ -87,7 +85,7 @@
             });
             $("ul").prepend(list);
 
-            // ページネーションを配置する
+            // ページネーションの表示
             var pagination = $(
               "<div class='pager' data-js='pager'>" +
                 "<div class='counter'>" +
@@ -115,7 +113,7 @@
             var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
             var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
 
-            // 前へボタンの挙動
+            // 前へボタンの挙動を設定
             if(pageNum === 1){
               $prev.addClass("disabled");
               $prev.on('click', function(e){
@@ -129,7 +127,7 @@
               })
             }
 
-            // 次へボタンの挙動
+            // 次へボタンの挙動を設定
             if(pageNum === data.pageCount){
               $next.addClass("disabled");
               $next.on('click', function(e){
@@ -144,44 +142,14 @@
             }
 
           } else {
+            // 検索結果が0件の時の挙動
             $message.html(
               "<p>検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</p>"
             );
           }
         }
 
-        // ボタンクリック後の挙動
-        var btn_click = function(){
-          $.ajax({
-            url:"https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
-            type: "GET",
-            datatype: "json",
-            data: {
-              applicationId: appId,
-              booksGenreId: "001",
-              keyword: searchWord,
-              page: pageNum,
-              first: firstData,
-              hits: "20",
-            },
-          })
-            .done(function (data) {
-              success(data);
-            })
-            .fail(function (xhr) {
-              reset();
-              if (xhr.status === 0) {
-                $message.text("③オフライン！");
-              } else if (xhr.status === 400) {
-                $message.text("①空欄！");
-              } else if (xhr.status === 429) {
-                $message.text("②クリックしすぎ！");
-              } else {
-                $message.text("わからん！！！");
-              }
-            });
-        }
-
+        // 検索結果
         var result = function(){
           $.ajax({
             url:"https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
@@ -201,11 +169,11 @@
             .fail(function (xhr) {
               reset();
               if (xhr.status === 0) {
-                $message.text("③オフライン！");
+                $message.text("通信に失敗しました。インターネットの接続をご確認ください。");
               } else if (xhr.status === 400) {
-                $message.text("①空欄！");
+                $message.text("検索文字が入力されていません。");
               } else if (xhr.status === 429) {
-                $message.text("②クリックしすぎ！");
+                $message.text("リクエスト過多です。しばらく時間を置いてからお試しください。");
               } else {
                 $message.text("わからん！！！");
               }
