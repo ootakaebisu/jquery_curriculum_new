@@ -55,6 +55,8 @@
         // 通信が成功したときの挙動
         var success = function(data){
           reset();
+          $(".search__btn").scrollTop(0);
+
           if (data.count > 0) {
             // 本を並べる
             var list = "";
@@ -113,7 +115,7 @@
             var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
             var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
 
-            // 前へボタンクリック
+            // 前へボタンの挙動
             if(pageNum === 1){
               $prev.addClass("disabled");
               $prev.on('click', function(e){
@@ -127,7 +129,7 @@
               })
             }
 
-            // 次へボタンクリック
+            // 次へボタンの挙動
             if(pageNum === data.pageCount){
               $next.addClass("disabled");
               $next.on('click', function(e){
