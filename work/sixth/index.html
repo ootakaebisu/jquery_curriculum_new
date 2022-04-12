@@ -66,15 +66,8 @@
           result();
         })
 
-        // リセット
-        var reset = function(){
-          $message.empty();
-          $lists.empty();
-          $(".pager").remove();
-        }
-
         // 検索
-        var result = function(){
+        function result(){
           $.ajax({
             url:"https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
             type: "GET",
@@ -105,7 +98,7 @@
         }
 
         // リスト表示
-        var success = function(data){
+        function success(data){
           reset();
           $(".search__btn").scrollTop(0);
 
@@ -136,6 +129,7 @@
                 "</li>";
             });
             $("ul").prepend(list);
+            pager(data);
 
           } else {
             // 検索結果が0件の時の挙動
@@ -146,49 +140,57 @@
         }
 
         // ページャ表示
-        var pagination = $(
-          "<div class='pager' data-js='pager'>" +
-            "<div class='counter'>" +
-            "<span class='counter-current'>" +
-            pageNum +
-            "</span>" +
-            "/" +
-            "<span class='counter-all'>" +
-            data.pageCount +
-            "</span>" +
-            "</div>" +
-            "<div class='btn-wrapper'>" +
-            "<a class='btn-item' data-js='page-prev' href=''>" +
-            "前へ" +
-            "</a>" +
-            "<a class='btn-item' data-js='page-next' href=''>" +
-            "次へ" +
-            "</a>" +
-            "</div>" +
-            "</div>"
-        );
-        $("ul").after(pagination);
+        function pager(data){
+          var pagination = $(
+            "<div class='pager' data-js='pager'>" +
+              "<div class='counter'>" +
+              "<span class='counter-current'>" +
+              pageNum +
+              "</span>" +
+              "/" +
+              "<span class='counter-all'>" +
+              data.pageCount +
+              "</span>" +
+              "</div>" +
+              "<div class='btn-wrapper'>" +
+              "<a class='btn-item' data-js='page-prev' href=''>" +
+              "前へ" +
+              "</a>" +
+              "<a class='btn-item' data-js='page-next' href=''>" +
+              "次へ" +
+              "</a>" +
+              "</div>" +
+              "</div>"
+          );
+          $("ul").after(pagination);
 
-        var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
-        var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
+          var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
+          var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
 
-        // 次へのキャンセル
-        if(pageNum === data.pageCount){
-          $next.addClass("disabled");
-          $next.on('click', function(e){
-            e.preventDefault();
-          })
+          // 次へのキャンセル
+          if(pageNum === data.pageCount){
+            $next.addClass("disabled");
+            $next.on('click', function(e){
+              e.preventDefault();
+            })
+          }
+
+          // 前へのキャンセル
+          if(pageNum === 1){
+            $prev.addClass("disabled");
+            $prev.on('click', function(e){
+              e.preventDefault();
+            })
+          }
         }
 
-        // 前へのキャンセル
-        if(pageNum === 1){
-          $prev.addClass("disabled");
-          $prev.on('click', function(e){
-            e.preventDefault();
-          })
+        // リセット
+        function reset(){
+          $message.empty();
+          $lists.empty();
+          $(".pager").remove();
         }
 
-     
       });
 
 
