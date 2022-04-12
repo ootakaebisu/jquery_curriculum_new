@@ -53,14 +53,14 @@
         });
 
         // 次へボタンのクリック
-        $(document).on('click', $prev, function(e){
+        $(document).on('click', ".btn-item-next", function(e){
           e.preventDefault();
           pageNum = pageNum + 1;
           result();
         })
 
         // 前へボタンのクリック
-        $(document).on('click', $prev, function(e){
+        $(document).on('click', ".btn-item-prev", function(e){
           e.preventDefault();
           pageNum = pageNum - 1;
           result();
@@ -84,16 +84,7 @@
               success(data);
             })
             .fail(function (xhr) {
-              reset();
-              if (xhr.status === 0) {
-                $message.text("通信に失敗しました。インターネットの接続をご確認ください。");
-              } else if (xhr.status === 400) {
-                $message.text("検索文字が入力されていません。");
-              } else if (xhr.status === 429) {
-                $message.text("リクエスト過多です。しばらく時間を置いてからお試しください。");
-              } else {
-                $message.text("わからん！！！");
-              }
+              failure(xhr);
             });
         }
 
@@ -128,7 +119,7 @@
                 "</div>" +
                 "</li>";
             });
-            $("ul").prepend(list);
+            $lists.prepend(list);
             pager(data);
 
           } else {
@@ -162,10 +153,12 @@
               "</div>" +
               "</div>"
           );
-          $("ul").after(pagination);
+          $lists.after(pagination);
 
           var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
+          $prev.addClass("btn-item-prev")
           var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
+          $next.addClass("btn-item-next")
 
           // 次へのキャンセル
           if(pageNum === data.pageCount){
@@ -189,6 +182,20 @@
           $message.empty();
           $lists.empty();
           $(".pager").remove();
+        }
+
+        // エラー
+        function failure(object){
+          reset();
+          if (object.status === 0) {
+            $message.text("通信に失敗しました。インターネットの接続をご確認ください。");
+          } else if (object.status === 400) {
+            $message.text("検索文字が入力されていません。");
+          } else if (object.status === 429) {
+            $message.text("リクエスト過多です。しばらく時間を置いてからお試しください。");
+          } else {
+            $message.text("わからん！！！");
+          }
         }
 
       });
