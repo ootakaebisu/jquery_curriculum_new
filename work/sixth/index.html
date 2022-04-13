@@ -41,6 +41,7 @@
       // 実装！！！！！！！！
       $(function () {
         var pageNum = 0;
+        var maxPage = 0;
         var searchWord = '';
         var $message = $(".message");
         var $lists = $(".lists");
@@ -53,17 +54,21 @@
         });
 
         // 次へボタンのクリック
-        $(document).on('click', ".btn-item-next", function(e){
+        $(document).on('click', '[data-js="page-next"]', function(e){
           e.preventDefault();
-          pageNum = pageNum + 1;
-          result();
+          if(pageNum !== maxPage){
+            pageNum = pageNum + 1;
+            result();
+          }
         })
 
         // 前へボタンのクリック
-        $(document).on('click', ".btn-item-prev", function(e){
+        $(document).on('click', '[data-js="page-prev"]', function(e){
           e.preventDefault();
-          pageNum = pageNum - 1;
-          result();
+          if(pageNum !== 1){
+            pageNum = pageNum - 1;
+            result();
+          }
         })
 
         // 検索
@@ -155,25 +160,19 @@
           );
           $lists.after(pagination);
 
-          var $prev = $('.btn-item').filter(function(){return($(this).data('js') === 'page-prev');});
-          $prev.addClass("btn-item-prev")
-          var $next = $('.btn-item').filter(function(){return($(this).data('js') === 'page-next');});
-          $next.addClass("btn-item-next")
+          var $prev = $('[data-js="page-prev"]');
+          var $next = $('[data-js="page-next"]');
 
           // 次へのキャンセル
           if(pageNum === data.pageCount){
             $next.addClass("disabled");
-            $next.on('click', function(e){
-              e.preventDefault();
-            })
           }
+
+          maxPage = data.pageCount
 
           // 前へのキャンセル
           if(pageNum === 1){
             $prev.addClass("disabled");
-            $prev.on('click', function(e){
-              e.preventDefault();
-            })
           }
         }
 
