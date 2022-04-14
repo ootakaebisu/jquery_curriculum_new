@@ -50,7 +50,7 @@
         $(".search__btn").on("click", function () {
           pageNum = 1;
           searchWord = $(".search__text__input").val();
-          result();
+          search();
         });
 
         // 次へボタンのクリック
@@ -58,7 +58,7 @@
           e.preventDefault();
           if(pageNum !== maxPage){
             pageNum = pageNum + 1;
-            result();
+            search();
           }
         })
 
@@ -67,12 +67,12 @@
           e.preventDefault();
           if(pageNum !== 1){
             pageNum = pageNum - 1;
-            result();
+            search();
           }
         })
 
         // 検索
-        function result(){
+        function search(){
           $.ajax({
             url:"https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522",
             type: "GET",
@@ -89,7 +89,7 @@
               success(data);
             })
             .fail(function (xhr) {
-              failure(xhr);
+              error(xhr);
             });
         }
 
@@ -137,6 +137,8 @@
 
         // ページャ表示
         function pager(data){
+          maxPage = data.pageCount
+
           var pagination = $(
             "<div class='pager' data-js='pager'>" +
               "<div class='counter'>" +
@@ -145,7 +147,7 @@
               "</span>" +
               "/" +
               "<span class='counter-all'>" +
-              data.pageCount +
+              maxPage +
               "</span>" +
               "</div>" +
               "<div class='btn-wrapper'>" +
@@ -164,11 +166,9 @@
           var $next = $('[data-js="page-next"]');
 
           // 次へのキャンセル
-          if(pageNum === data.pageCount){
+          if(pageNum === maxPage){
             $next.addClass("disabled");
           }
-
-          maxPage = data.pageCount
 
           // 前へのキャンセル
           if(pageNum === 1){
@@ -184,7 +184,7 @@
         }
 
         // エラー
-        function failure(object){
+        function error(object){
           reset();
           if (object.status === 0) {
             $message.text("通信に失敗しました。インターネットの接続をご確認ください。");
